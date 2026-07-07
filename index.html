@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Siddharth Kushawah — Portfolio</title>
+<meta name="description" content="AI Automation & Ops — building with AI coding agents" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg-soft: #121212;
+    --text: #ededed;
+    --text-dim: #8a8a8a;
+    --accent: #d4a574;
+    --border: rgba(255,255,255,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  .display { font-family: 'Playfair Display', serif; }
+
+  /* Nav */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 22px 6vw;
+    background: rgba(10,10,10,0.75);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav .name { font-size: 14px; font-weight: 600; letter-spacing: 0.5px; }
+  nav .links { display: flex; gap: 28px; }
+  nav a {
+    color: var(--text-dim); text-decoration: none; font-size: 13px;
+    letter-spacing: 0.3px; transition: color 0.25s ease;
+  }
+  nav a:hover { color: var(--accent); }
+
+  section {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 120px 6vw 80px;
+    max-width: 1100px; margin: 0 auto;
+  }
+
+  /* Hero */
+  #hero { min-height: 100vh; }
+  .hero-eyebrow {
+    color: var(--accent); font-size: 13px; letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 24px;
+    opacity: 0; transform: translateY(12px);
+    animation: revealUp 0.9s ease forwards 0.15s;
+  }
+  .hero-title {
+    font-size: clamp(48px, 9vw, 108px); font-weight: 700; line-height: 1.02;
+    letter-spacing: -0.02em;
+    opacity: 0; transform: translateY(24px);
+    animation: revealUp 1s ease forwards 0.35s;
+  }
+  .hero-tagline {
+    margin-top: 28px; font-size: clamp(16px, 2vw, 22px); color: var(--text-dim);
+    max-width: 620px; font-weight: 400;
+    opacity: 0; transform: translateY(20px);
+    animation: revealUp 1s ease forwards 0.6s;
+  }
+  .hero-scroll-hint {
+    margin-top: 64px; font-size: 12px; color: var(--text-dim);
+    letter-spacing: 1.5px; text-transform: uppercase;
+    opacity: 0; animation: fadeIn 1s ease forwards 1.2s;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .hero-scroll-hint::before {
+    content: ""; width: 24px; height: 1px; background: var(--text-dim);
+  }
+
+  @keyframes revealUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  /* Reveal-on-scroll utility */
+  .reveal {
+    opacity: 0; transform: translateY(36px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  .section-label {
+    color: var(--accent); font-size: 13px; letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 20px;
+  }
+  .section-heading {
+    font-size: clamp(32px, 5vw, 52px); font-weight: 700; margin-bottom: 32px;
+    letter-spacing: -0.01em;
+  }
+
+  /* About */
+  #about p {
+    font-size: clamp(17px, 2vw, 21px); color: var(--text-dim); max-width: 700px;
+    line-height: 1.75;
+  }
+  #about p + p { margin-top: 20px; }
+  #about strong { color: var(--text); font-weight: 500; }
+
+  /* Projects */
+  .project {
+    padding: 48px 0; border-top: 1px solid var(--border);
+  }
+  .project:last-child { border-bottom: 1px solid var(--border); }
+  .project-title { font-size: clamp(28px, 4vw, 42px); font-weight: 700; margin-bottom: 14px; }
+  .project-desc { color: var(--text-dim); font-size: 16px; max-width: 640px; margin-bottom: 18px; }
+  .project-tech {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px;
+  }
+  .project-tech span {
+    font-size: 12px; color: var(--text-dim); border: 1px solid var(--border);
+    padding: 5px 12px; border-radius: 999px;
+  }
+  .project-links { display: flex; gap: 20px; }
+  .project-links a {
+    color: var(--text); text-decoration: none; font-size: 14px; font-weight: 500;
+    display: inline-flex; align-items: center; gap: 6px;
+    border-bottom: 1px solid var(--accent); padding-bottom: 3px;
+    transition: opacity 0.25s ease, gap 0.25s ease;
+  }
+  .project-links a:hover { opacity: 0.7; gap: 10px; }
+
+  /* Skills */
+  .skills-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 28px; margin-top: 12px;
+  }
+  .skill-group h4 {
+    font-size: 13px; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 10px; font-weight: 600;
+  }
+  .skill-group p { color: var(--text-dim); font-size: 15px; line-height: 1.7; }
+
+  /* Contact */
+  #contact { min-height: 70vh; }
+  .contact-links {
+    display: flex; flex-wrap: wrap; gap: 16px; margin-top: 32px;
+  }
+  .contact-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 26px; border-radius: 6px; text-decoration: none;
+    font-size: 14px; font-weight: 500; transition: all 0.25s ease;
+  }
+  .contact-btn.primary { background: var(--accent); color: #0a0a0a; }
+  .contact-btn.primary:hover { background: #e0b688; }
+  .contact-btn.secondary { border: 1px solid var(--border); color: var(--text); }
+  .contact-btn.secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  footer {
+    text-align: center; padding: 40px 6vw; color: var(--text-dim); font-size: 13px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 640px) {
+    nav .links { gap: 16px; }
+    nav a { font-size: 11px; }
+    section { padding: 100px 6vw 60px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="name">Siddharth Kushawah</div>
+  <div class="links">
+    <a href="#about">About</a>
+    <a href="#projects">Projects</a>
+    <a href="#skills">Skills</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<section id="hero">
+  <div class="hero-eyebrow">AI Automation &amp; Operations</div>
+  <h1 class="hero-title display">Siddharth<br/>Kushawah</h1>
+  <p class="hero-tagline">Building with AI coding agents — I describe the problem, AI ships the solution, I ship it live.</p>
+  <div class="hero-scroll-hint">Scroll down</div>
+</section>
+
+<section id="about">
+  <div class="reveal">
+    <div class="section-label">About</div>
+    <h2 class="section-heading display">How I work</h2>
+    <p>I use AI tools — <strong>Claude, Gemini, DeepSeek</strong> — through the terminal to scope real problems and ship working solutions fast, rather than hand-coding everything myself line by line.</p>
+    <p>Every project below is <strong>real and live</strong> — not a mockup. I describe the problem and the requirements, an AI coding agent builds and tests it, and I deploy it myself. That's the actual workflow, start to finish.</p>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="reveal">
+    <div class="section-label">Projects</div>
+    <h2 class="section-heading display">Selected work</h2>
+  </div>
+
+  <div class="project reveal">
+    <h3 class="project-title display">Lead Automation Pipeline</h3>
+    <p class="project-desc">A webhook-based lead capture system with duplicate detection, retry logic with exponential backoff, and parallel WhatsApp + email notifications — built so no lead is ever silently lost.</p>
+    <div class="project-tech">
+      <span>Node.js</span><span>Express</span><span>Google Sheets API</span><span>Vercel Serverless</span>
+    </div>
+    <div class="project-links">
+      <a href="https://lead-automation-pipeline.vercel.app" target="_blank" rel="noopener">Live Demo →</a>
+      <a href="https://github.com/siddharthshingh1-alt/lead-automation-pipeline" target="_blank" rel="noopener">GitHub Code →</a>
+    </div>
+  </div>
+
+  <div class="project reveal">
+    <h3 class="project-title display">Subscription Tracker</h3>
+    <p class="project-desc">A SaaS spend management tool that tracks renewals, flags underused or redundant subscriptions by category, and surfaces upcoming renewal windows before they silently auto-renew.</p>
+    <div class="project-tech">
+      <span>Node.js</span><span>Express</span><span>Vercel</span>
+    </div>
+    <div class="project-links">
+      <a href="https://subscription-tracker-blue.vercel.app" target="_blank" rel="noopener">Live Demo →</a>
+      <a href="https://github.com/siddharthshingh1-alt/traker" target="_blank" rel="noopener">GitHub Code →</a>
+    </div>
+  </div>
+
+  <div class="project reveal">
+    <h3 class="project-title display">FabVerify AI Co-Founder</h3>
+    <p class="project-desc">A department- and thinker-based AI advisory chat tool built for my own startup, FabVerify — India's garment industry operating system. Select a department or one of 80+ historical/business thinkers and get advice grounded in their actual frameworks.</p>
+    <div class="project-tech">
+      <span>Claude (via Puter.js)</span><span>Vanilla JS</span><span>No Backend</span>
+    </div>
+    <div class="project-links">
+      <a href="https://fabverify-cofounder.vercel.app" target="_blank" rel="noopener">Live Demo →</a>
+      <a href="https://github.com/siddharthshingh1-alt/cofounder" target="_blank" rel="noopener">GitHub Code →</a>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="reveal">
+    <div class="section-label">Skills</div>
+    <h2 class="section-heading display">What I work with</h2>
+    <div class="skills-grid">
+      <div class="skill-group">
+        <h4>AI-Assisted Development</h4>
+        <p>Claude, Claude Code, Cursor, DeepSeek — scoping problems and shipping working code through AI agents</p>
+      </div>
+      <div class="skill-group">
+        <h4>Automation</h4>
+        <p>n8n, Zapier, Pabbly concepts, webhook-driven pipelines, retry/error handling</p>
+      </div>
+      <div class="skill-group">
+        <h4>Backend</h4>
+        <p>Node.js, Express, REST APIs, serverless functions, Vercel deployment</p>
+      </div>
+      <div class="skill-group">
+        <h4>Communication Automation</h4>
+        <p>WhatsApp Business API concepts, email automation, multi-channel notification systems</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="reveal">
+    <div class="section-label">Contact</div>
+    <h2 class="section-heading display">Let's talk</h2>
+    <p style="color: var(--text-dim); font-size: 17px; max-width: 500px;">Open to opportunities in AI automation and operations. Reach out, or check the resume below.</p>
+    <div class="contact-links">
+      <a class="contact-btn primary" href="mailto:siddharthshingh1@gmail.com">Email me</a>
+      <a class="contact-btn secondary" href="tel:9773933279">Call</a>
+      <a class="contact-btn secondary" href="https://www.linkedin.com/in/siddharth-kushwaha-merchandiser" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="contact-btn secondary" id="resume-btn" href="/resume.pdf" target="_blank" rel="noopener">Download Résumé</a>
+    </div>
+  </div>
+</section>
+
+<footer>Built by Siddharth Kushawah, with AI coding agents.</footer>
+
+<script>
+  // Scroll-reveal via IntersectionObserver (no external animation library needed)
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+  revealEls.forEach(el => observer.observe(el));
+
+  // Gracefully hide the resume button if resume.pdf hasn't been added yet
+  fetch('/resume.pdf', { method: 'HEAD' }).then(res => {
+    if (!res.ok) {
+      const btn = document.getElementById('resume-btn');
+      btn.textContent = 'Résumé coming soon';
+      btn.removeAttribute('href');
+      btn.style.opacity = '0.5';
+      btn.style.cursor = 'default';
+    }
+  }).catch(() => {
+    const btn = document.getElementById('resume-btn');
+    btn.textContent = 'Résumé coming soon';
+    btn.removeAttribute('href');
+    btn.style.opacity = '0.5';
+    btn.style.cursor = 'default';
+  });
+</script>
+
+</body>
+</html>
