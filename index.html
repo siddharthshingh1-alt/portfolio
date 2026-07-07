@@ -88,12 +88,38 @@
     to { opacity: 1; }
   }
 
-  /* Reveal-on-scroll utility */
+  /* Reveal-on-scroll utility: scale/pop-in, calm ease-out, no overshoot */
   .reveal {
-    opacity: 0; transform: translateY(36px);
-    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0; transform: scale(0.88);
+    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal.visible { opacity: 1; transform: scale(1); }
+
+  /* Custom cursor: trail + spotlight (fine-pointer / non-touch devices only) */
+  @media (hover: hover) and (pointer: fine) {
+    * { cursor: none; }
+  }
+  .cursor-dot {
+    position: fixed; top: 0; left: 0;
+    border-radius: 50%;
+    background: var(--accent);
+    pointer-events: none;
+    z-index: 9999;
+    will-change: transform;
+  }
+  .cursor-spotlight {
+    position: fixed; top: 0; left: 0;
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(212,165,116,0.07) 0%, rgba(212,165,116,0.03) 35%, transparent 70%);
+    pointer-events: none;
+    z-index: 5;
+    will-change: transform;
+  }
+
+  /* Cursor-reactive tilt targets */
+  .tilt-inner { display: inline-block; will-change: transform; }
+  .section-heading, .project-title { will-change: transform; }
 
   .section-label {
     color: var(--accent); font-size: 13px; letter-spacing: 2px;
@@ -187,7 +213,7 @@
 
 <section id="hero">
   <div class="hero-eyebrow">AI Automation &amp; Operations</div>
-  <h1 class="hero-title display">Siddharth<br/>Kushawah</h1>
+  <h1 class="hero-title display"><span class="tilt-inner">Siddharth<br/>Kushawah</span></h1>
   <p class="hero-tagline">Building with AI coding agents — I describe the problem, AI ships the solution, I ship it live.</p>
   <div class="hero-scroll-hint">Scroll down</div>
 </section>
@@ -314,6 +340,74 @@
     btn.style.opacity = '0.5';
     btn.style.cursor = 'default';
   });
+
+  // Cursor trail, ambient spotlight, and cursor-reactive tilt — desktop/mouse only.
+  // Skipped entirely on touch devices (no custom cursor, no listeners, no rAF loop).
+  (function () {
+    const isFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (!isFinePointer) return;
+
+    // Comet trail: a chain of dots, each easing toward the previous one so the
+    // tail lags progressively more — smooth, no snapping.
+    const TRAIL_COUNT = 6;
+    const trailDots = [];
+    for (let i = 0; i < TRAIL_COUNT; i++) {
+      const el = document.createElement('div');
+      el.className = 'cursor-dot';
+      const size = 11 - i * 1.4;
+      el.style.width = size + 'px';
+      el.style.height = size + 'px';
+      el.style.opacity = (0.55 - i * 0.08).toFixed(2);
+      document.body.appendChild(el);
+      trailDots.push({ el, x: window.innerWidth / 2, y: window.innerHeight / 2 });
+    }
+
+    const spotlight = document.createElement('div');
+    spotlight.className = 'cursor-spotlight';
+    document.body.appendChild(spotlight);
+
+    const tiltEls = document.querySelectorAll('.tilt-inner, .section-heading, .project-title');
+    let tiltX = 0, tiltY = 0; // smoothed (lerped) tilt, updated per frame
+    let targetTiltX = 0, targetTiltY = 0;
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      targetTiltX = (mouseX / window.innerWidth - 0.5) * 2; // -1..1
+      targetTiltY = (mouseY / window.innerHeight - 0.5) * 2;
+    });
+
+    function loop() {
+      // Trail chain: each dot follows the one before it (first follows the mouse)
+      let x = mouseX, y = mouseY;
+      trailDots.forEach((dot) => {
+        dot.x += (x - dot.x) * 0.35;
+        dot.y += (y - dot.y) * 0.35;
+        dot.el.style.transform = `translate(${dot.x}px, ${dot.y}px) translate(-50%, -50%)`;
+        x = dot.x;
+        y = dot.y;
+      });
+
+      // Spotlight follows the raw cursor directly — it's the ambient light source
+      spotlight.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+
+      // Tilt: smoothed toward the target so elements feel weighted, not snappy
+      tiltX += (targetTiltX - tiltX) * 0.06;
+      tiltY += (targetTiltY - tiltY) * 0.06;
+      const deg = tiltX * 2.5;
+      const px = tiltX * 8;
+      const py = tiltY * 6;
+      tiltEls.forEach((el) => {
+        el.style.transform = `rotate(${deg}deg) translate(${px}px, ${py}px)`;
+      });
+
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  })();
 </script>
 
 </body>
